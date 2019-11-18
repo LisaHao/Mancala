@@ -36,13 +36,13 @@ class Mancala:
     def getState(self):
         '''Returns the state of the game (as a string).'''
         result = '    {0: >2} {1: >2} {2: >2} {3: >2} {4: >2} {5: >2}\n'.format(
-            self._board[0], self._board[1], self._board[2],
-            self._board[3], self._board[4], self._board[5])
+            self._board[5], self._board[4], self._board[3],
+            self._board[2], self._board[1], self._board[0])
         result += ' {0: >2}                   {1: >2} \n'.format(
-            self._board[13], self._board[6])
+            self._board[6], self._board[13])
         result += '    {0: >2} {1: >2} {2: >2} {3: >2} {4: >2} {5: >2}'.format(
-            self._board[12], self._board[11], self._board[10],
-            self._board[9], self._board[8], self._board[7])
+            self._board[7], self._board[8], self._board[9],
+            self._board[10], self._board[11], self._board[12])
         return result
 
     def setState(self, state):
@@ -156,9 +156,9 @@ class Mancala:
             return None
         else:
             if self.score()[0] > self.score()[1]:
-                return -1
-            if self.score()[0] < self.score()[1]:
                 return 1
+            if self.score()[0] < self.score()[1]:
+                return -1
             else:
                 return 0
 
@@ -252,9 +252,8 @@ def playMancala(problem, initState, players, playerPrograms, numTrials, swaps, t
                     except TimeoutError:
                         print(players[playerIdx] + " timed out after 2 seconds. Choosing random action.")
                         move = random.choice(problem.legalMoves())
-                print(move)
                 problem.move(move)             
-    
+            problem.displayBoard()
             if problem.finalScore() == 0:
                 whoWon = "Draw"
                 wins[2] += 1
