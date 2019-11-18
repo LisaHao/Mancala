@@ -31,7 +31,10 @@ class Mancala:
         print("        {0: >10} | {1: >10}".format(
             self.score()[0], self.score()[1]))
         print(self.getState())
-        print("Player {0}'s Turn".format(self.getTurn()))
+        if self.getTurn() is 1:
+            print("Player One's Turn".format(self.getTurn()))
+        if self.getTurn() is -1:
+            print("Player Two's Turn".format(self.getTurn()))
 
     def getState(self):
         '''Returns the state of the game (as a string).'''
@@ -216,7 +219,7 @@ class DefaultMoveOrder:
     def getSuccessors(self, state):
         return self.__problem.getSuccessors(state)
 
-def playMancala(problem, initState, players, playerPrograms, numTrials, swaps, testDefault):
+def playMancala(problem, initState, players, playerPrograms, numTrials, swaps, testDefault, minimax):
     wins = [0, 0, 0]
     times = [0, 0]
     turns = [0, 0]
@@ -236,22 +239,25 @@ def playMancala(problem, initState, players, playerPrograms, numTrials, swaps, t
                 elif players[playerIdx] == "human":
                     move = problem.getMove()
                 else: #minimax
-                    startT = time.time()
-                    try:
-                        with timeout(2):
-                            move, numNodes = heuristicminimax.getMove(problem.getState(), problem.getTurn(), 4, playerPrograms[playerIdx][0], playerPrograms[playerIdx][1])
-                            nodes[playerIdx] += numNodes
-                            endT = time.time()
-                            times[playerIdx] += endT - startT
-                            turns[playerIdx] += 1
+                    if minimax is False:
+                        move = playerPrograms[playerIdx].getMove(problem)
+                    if minimax is True:
+                        startT = time.time()
+                        try:
+                            with timeout(2):
+                                move, numNodes = heuristicminimax.getMove(problem.getState(), problem.getTurn(), 4, playerPrograms[playerIdx][0], playerPrograms[playerIdx][1])
+                                nodes[playerIdx] += numNodes
+                                endT = time.time()
+                                times[playerIdx] += endT - startT
+                                turns[playerIdx] += 1
 
-                        if testDefault[playerIdx]:
-                            moveD, numNodesD = heuristicminimax.getMove(problem.getState(), problem.getTurn(), 4, playerPrograms[playerIdx][0], defaultOrder)
-                            defaultNodes[playerIdx] += numNodesD
+                            if testDefault[playerIdx]:
+                                moveD, numNodesD = heuristicminimax.getMove(problem.getState(), problem.getTurn(), 4, playerPrograms[playerIdx][0], defaultOrder)
+                                defaultNodes[playerIdx] += numNodesD
 
-                    except TimeoutError:
-                        print(players[playerIdx] + " timed out after 2 seconds. Choosing random action.")
-                        move = random.choice(problem.legalMoves())
+                        except TimeoutError:
+                            print(players[playerIdx] + " timed out after 2 seconds. Choosing random action.")
+                            move = random.choice(problem.legalMoves())
                 problem.move(move)             
             problem.displayBoard()
             if problem.finalScore() == 0:
@@ -273,16 +279,18 @@ def main():
     parser = argparse.ArgumentParser(description='Play Mancala with computer or human players.')
     parser.add_argument('-p1', '--player1', type=str, default='random', help='the name of a Python file containing a MancalaAgent, or "random" or "human" (default: random)')
     parser.add_argument('-p2', '--player2', type=str, default='random', help='the name of a Python file containing a MancalaAgent, or "random" or "human" (default: random)')
+    parser.add_argument('-m', '--minimax', type=bool, default=False, help='if using minimax algorithm')
     parser.add_argument('-t', '--trials', type=int, help='plays TRIALS games, then swaps the players and plays TRIALS more games (has no effect if either player is human; with this option the game will not be displayed)')
     parser.add_argument('-d1', '--default1', action='store_true', default=False, help='measures nodes expanded by Player 1 with the default move order during the game (has no effect with -r)')
     parser.add_argument('-d2', '--default2', action='store_true', default=False, help='measures nodes expanded by Player 2 with the default move order during the game (has no effect with -r)')
     
     args = parser.parse_args()
-
+    print(args)
     problem = Mancala()   
     initState = problem.getState()
 
     players = [args.player1, args.player2]
+    minimax = args.minimax
 
     if args.trials != None:
         swaps = 2
@@ -297,18 +305,22 @@ def main():
 
     if swaps == 2:
         random.seed(42)
-        
+    
     playerPrograms = [None, None]
     for i in range(2):
+        # just import the moves
         if players[i] != "random" and players[i] != "human":
             mod = importlib.import_module(".".join(players[i].split("/")[-1].split(".")[:-1]))
-            with timeout(2):
-                    leafEval = mod.MancalaHeuristicEval(problem)
-                    order = mod.MancalaOrderHeuristic(problem)
-                    playerPrograms[i] = (leafEval, order)
+            if minimax is True:
+                with timeout(2):
+                        leafEval = mod.MancalaHeuristicEval(problem)
+                        order = mod.MancalaOrderHeuristic(problem)
+                        playerPrograms[i] = (leafEval, order)
+            if minimax is False:
+                playerPrograms[i] = mod.MancalaGreedyFunction(problem)
               
     defaultOrder = [args.default1, args.default2]
-    wins, times, turns, nodes, defaultNodes = playMancala(problem, initState, players, playerPrograms, numTrials, swaps, defaultOrder)
+    wins, times, turns, nodes, defaultNodes = playMancala(problem, initState, players, playerPrograms, numTrials, swaps, defaultOrder, minimax)
             
     if swaps == 2:
         print("Stats:")
