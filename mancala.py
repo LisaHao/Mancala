@@ -65,13 +65,17 @@ class Mancala:
     def getSuccessors(self, state):
         '''Takes a state and returns the possible successors as 4-tuples: (next state, action to get there, whose turn in the next state, final score). For the last two items, see getTurn() and finalScore().'''
         currentState = self.getState()
+        currentTurn = self.getTurn()
         succ = []
         self.setState(state)
         for a in self.legalMoves():
             self.move(a)
+            self.displayBoard()
             succ.append((self.getState(), a, self.getTurn(), self.finalScore()))
             self.setState(state)
+            self.__turn = currentTurn
         self.setState(currentState)
+        self.__turn = currentTurn
         return succ
 
     def legalMoves(self):
@@ -241,14 +245,15 @@ def playMancala(problem, initState, players, playerPrograms, numTrials, swaps, t
                             times[playerIdx] += endT - startT
                             turns[playerIdx] += 1
 
-                        if not tournament and testDefault[playerIdx]:
+                        if testDefault[playerIdx]:
                             moveD, numNodesD = heuristicminimax.getMove(problem.getState(), problem.getTurn(), 4, playerPrograms[playerIdx][0], defaultOrder)
                             defaultNodes[playerIdx] += numNodesD
 
                     except TimeoutError:
                         print(players[playerIdx] + " timed out after 2 seconds. Choosing random action.")
                         move = random.choice(problem.legalMoves())
-                problem.move(move)              
+                print(move)
+                problem.move(move)             
     
             if problem.finalScore() == 0:
                 whoWon = "Draw"
@@ -315,10 +320,9 @@ def main():
     for i in range(2):
         if turns[i] > 0:
             print(players[i] + ":\n  " + str(times[i]/turns[i]) + " seconds per step, on average")
-            if not args.tournament:
-                if defaultOrder[i]:
-                    print("  " + str(defaultNodes[i]/turns[i]) + " nodes expanded per step, on average, using the default move order")
-                print("  " + str(nodes[i]/turns[i]) + " nodes expanded per step, on average, using the order heuristic")
+            if defaultOrder[i]:
+                print("  " + str(defaultNodes[i]/turns[i]) + " nodes expanded per step, on average, using the default move order")
+            print("  " + str(nodes[i]/turns[i]) + " nodes expanded per step, on average, using the order heuristic")
             
 if __name__ == "__main__":
     main()
