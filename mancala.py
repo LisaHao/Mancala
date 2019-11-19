@@ -256,6 +256,7 @@ def playMancala(problem, initState, players, playerPrograms, numTrials, swaps, t
                         try:
                             with timeout(2):
                                 move, numNodes = heuristicminimax.getMove(problem.getState(), problem.getTurn(), 4, playerPrograms[playerIdx][0], playerPrograms[playerIdx][1])
+                                print("lMove:" + str(move))
                                 nodes[playerIdx] += numNodes
                                 endT = time.time()
                                 times[playerIdx] += endT - startT
@@ -267,7 +268,10 @@ def playMancala(problem, initState, players, playerPrograms, numTrials, swaps, t
 
                         except TimeoutError:
                             print(players[playerIdx] + " timed out after 2 seconds. Choosing random action.")
-                            move = random.choice(problem.legalMoves()) 
+                            move = random.choice(problem.legalMoves())
+                print(problem.legalMoves())
+                print("Move:"+str(move))
+                print("turn:" + str(problem.getTurn()))
                 problem.move(move)            
             problem.displayBoard()
             if problem.finalScore() == 0:

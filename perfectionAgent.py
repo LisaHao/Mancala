@@ -30,14 +30,15 @@ class MancalaHeuristicEval:
         # getTile(row, col) -- returns the contents of the given position on the board ("X" for max, "O" for min, "." for empty)
         # getHeights() -- returns a list of the heights of the stacks in the 7 columns
         scorePositions = [6, 13]
+        standardHoleCount = 6
         board = self.__problem._board
-        player1StoneScore = 0
-        player2StoneScore = 0
+        player1StoneScore = standardHoleCount * (standardHoleCount - 1) / 2
+        player2StoneScore = standardHoleCount * (standardHoleCount - 1) / 2
         for i in range (0, scorePositions[0]):
-            player1StoneScore += board[i] / 2
+            player1StoneScore -= abs(board[i] - (scorePositions[0] - i))
         player1StoneScore += board[scorePositions[0]]
         for i in range (scorePositions[0] + 1, scorePositions[1]):
-            player2StoneScore += board[i] / 2
+            player2StoneScore -= abs(board[i] - (scorePositions[1] - i))
         player2StoneScore += board[scorePositions[1]]
         if (player1StoneScore + player2StoneScore == 0):
             eval = 0
