@@ -76,7 +76,6 @@ class Mancala:
         self.setState(state)
         for a in self.legalMoves():
             self.move(a)
-            self.displayBoard()
             succ.append((self.getState(), a, self.getTurn(), self.finalScore()))
             self.setState(state)
             self.__turn = currentTurn
@@ -87,6 +86,8 @@ class Mancala:
     def legalMoves(self):
         '''Returns the set of legal moves in the current state (a move is a column index).'''
         legalMoves = []
+        if self.__turn is 2:
+            return []
         if self.__turn == 1:
             for i in range(6):
                 if self._board[i] != 0:
@@ -157,6 +158,9 @@ class Mancala:
             self.__turn = -1
         elif current_idx is not 13 and self.__turn is -1:
             self.__turn = 1
+        
+        if self.isTerminal():
+            self.__turn = 2
                         
     def finalScore(self):
         '''If the game is not over, returns None. If it is over, returns -1 if min won, +1 if max won, or 0 if it is a draw.'''        
