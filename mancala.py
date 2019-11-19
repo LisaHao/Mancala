@@ -284,7 +284,7 @@ def main():
     parser = argparse.ArgumentParser(description='Play Mancala with computer or human players.')
     parser.add_argument('-p1', '--player1', type=str, default='random', help='the name of a Python file containing a MancalaAgent, or "random" or "human" (default: random)')
     parser.add_argument('-p2', '--player2', type=str, default='random', help='the name of a Python file containing a MancalaAgent, or "random" or "human" (default: random)')
-    parser.add_argument('-m', '--minimax', type=bool, default=False, help='if using minimax algorithm')
+    parser.add_argument('-m', '--minimax', action='store_true', default=False, help='if using minimax algorithm')
     parser.add_argument('-t', '--trials', type=int, help='plays TRIALS games, then swaps the players and plays TRIALS more games (has no effect if either player is human; with this option the game will not be displayed)')
     parser.add_argument('-d1', '--default1', action='store_true', default=False, help='measures nodes expanded by Player 1 with the default move order during the game (has no effect with -r)')
     parser.add_argument('-d2', '--default2', action='store_true', default=False, help='measures nodes expanded by Player 2 with the default move order during the game (has no effect with -r)')
