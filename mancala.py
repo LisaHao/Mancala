@@ -35,6 +35,9 @@ class Mancala:
             print("Player One's Turn".format(self.getTurn()))
         if self.getTurn() is -1:
             print("Player Two's Turn".format(self.getTurn()))
+    
+    def getBoard(self):
+        return self._board
 
     def getState(self):
         '''Returns the state of the game (as a string).'''

@@ -11,7 +11,11 @@ class MancalaGreedyFunction:
         '''Gives a heuristic evaluation of the given state.'''
         problem = self.__problem
         curState = problem.getState()
-        action = random.choice(problem.legalMoves())
-        print(action)
+        bestAction = random.choice(problem.legalMoves())
+        for a in problem.legalMoves():
+            if a < 6 and problem.getBoard()[a] == 6 - a:
+                bestAction = a
+            elif a > 6 and problem.getBoard()[a] == 1 + a%6:
+                bestAction = a
         #####YOUR CODE BEGINS HERE#####
-        return action
+        return bestAction
