@@ -68,6 +68,9 @@ class Mancala:
         if self.isTerminal():
             self.__turn = 2
 
+    def setTurn(self, turn):
+        self.__turn = turn
+
     def getSuccessors(self, state):
         '''Takes a state and returns the possible successors as 4-tuples: (next state, action to get there, whose turn in the next state, final score). For the last two items, see getTurn() and finalScore().'''
         currentState = self.getState()
@@ -238,6 +241,7 @@ def playMancala(problem, initState, players, playerPrograms, numTrials, swaps, t
     for i in range(swaps):
         for t in range(numTrials):
             problem.setState(initState)
+            problem.setTurn(1)
             while not problem.isTerminal():
                 problem.displayBoard()
                 turn = problem.getTurn()
@@ -266,8 +270,8 @@ def playMancala(problem, initState, players, playerPrograms, numTrials, swaps, t
 
                         except TimeoutError:
                             print(players[playerIdx] + " timed out after 2 seconds. Choosing random action.")
-                            move = random.choice(problem.legalMoves())
-                problem.move(move)             
+                            move = random.choice(problem.legalMoves()) 
+                problem.move(move)            
             problem.displayBoard()
             if problem.finalScore() == 0:
                 whoWon = "Draw"
@@ -294,7 +298,6 @@ def main():
     parser.add_argument('-d2', '--default2', action='store_true', default=False, help='measures nodes expanded by Player 2 with the default move order during the game (has no effect with -r)')
     
     args = parser.parse_args()
-    print(args)
     problem = Mancala()   
     initState = problem.getState()
 
