@@ -8,7 +8,7 @@ class MancalaGreedyFunction:
         ###(note: time limit for the constructors is 2 seconds!)
         
     def getMove(self, state):
-        '''Gives a heuristic evaluation of the given state.'''
+        '''Returns move that would give player a new turn if one exists (aka the last stone would go into own goal). Otherwise, random move.'''
         problem = self.__problem
         curState = problem.getState()
         bestAction = random.choice(problem.legalMoves())
