@@ -144,6 +144,8 @@ class Mancala:
             self._board[13] += sum(self._board[7:13])
             self._board[0:6] = [0, 0, 0, 0, 0, 0]
             self._board[7:13] = [0, 0, 0, 0, 0, 0]
+            self.__turn = 2
+            return
         # If last stone ends in score go again
         if current_idx is not 6 and self.__turn is 1:
             self.__turn = -1
