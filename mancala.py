@@ -231,7 +231,7 @@ class DefaultMoveOrder:
     def getSuccessors(self, state):
         return self.__problem.getSuccessors(state)
 
-def playMancala(problem, initState, players, playerPrograms, numTrials, swaps, testDefault, minimax):
+def playMancala(problem, initState, players, playerPrograms, numTrials, swaps, testDefault):
     wins = [0, 0, 0]
     times = [0, 0]
     turns = [0, 0]
@@ -252,9 +252,6 @@ def playMancala(problem, initState, players, playerPrograms, numTrials, swaps, t
                 elif players[playerIdx] == "human":
                     move = problem.getMove()
                 else: #minimax
-                    if minimax is False:
-                        move = playerPrograms[playerIdx].getMove(problem)
-                    if minimax is True:
                         startT = time.time()
                         try:
                             with timeout(2):
@@ -292,7 +289,6 @@ def main():
     parser = argparse.ArgumentParser(description='Play Mancala with computer or human players.')
     parser.add_argument('-p1', '--player1', type=str, default='random', help='the name of a Python file containing a MancalaAgent, or "random" or "human" (default: random)')
     parser.add_argument('-p2', '--player2', type=str, default='random', help='the name of a Python file containing a MancalaAgent, or "random" or "human" (default: random)')
-    parser.add_argument('-m', '--minimax', action='store_true', default=False, help='if using minimax algorithm')
     parser.add_argument('-t', '--trials', type=int, help='plays TRIALS games, then swaps the players and plays TRIALS more games (has no effect if either player is human; with this option the game will not be displayed)')
     parser.add_argument('-d1', '--default1', action='store_true', default=False, help='measures nodes expanded by Player 1 with the default move order during the game (has no effect with -r)')
     parser.add_argument('-d2', '--default2', action='store_true', default=False, help='measures nodes expanded by Player 2 with the default move order during the game (has no effect with -r)')
@@ -302,7 +298,6 @@ def main():
     initState = problem.getState()
 
     players = [args.player1, args.player2]
-    minimax = args.minimax
 
     if args.trials != None:
         swaps = 2
@@ -323,16 +318,13 @@ def main():
         # just import the moves
         if players[i] != "random" and players[i] != "human":
             mod = importlib.import_module(".".join(players[i].split("/")[-1].split(".")[:-1]))
-            if minimax is True:
-                with timeout(2):
-                        leafEval = mod.MancalaHeuristicEval(problem)
-                        order = mod.MancalaOrderHeuristic(problem)
-                        playerPrograms[i] = (leafEval, order)
-            if minimax is False:
-                playerPrograms[i] = mod.MancalaGreedyFunction(problem)
+            with timeout(2):
+                leafEval = mod.MancalaHeuristicEval(problem)
+                order = mod.MancalaOrderHeuristic(problem)
+                playerPrograms[i] = (leafEval, order)
               
     defaultOrder = [args.default1, args.default2]
-    wins, times, turns, nodes, defaultNodes = playMancala(problem, initState, players, playerPrograms, numTrials, swaps, defaultOrder, minimax)
+    wins, times, turns, nodes, defaultNodes = playMancala(problem, initState, players, playerPrograms, numTrials, swaps, defaultOrder)
             
     if swaps == 2:
         print("Stats:")
