@@ -6,6 +6,7 @@ import signal
 import os
 import sys
 
+
 try:
     signal.SIGALRM
 except Exception as ex:
@@ -250,11 +251,15 @@ def playMancala(problem, initState, players, playerPrograms, numTrials, swaps, t
                 if players[playerIdx] == "random":
                     move = random.choice(problem.legalMoves())
                 elif players[playerIdx] == "human":
-                    move = problem.getMove()
+                    #move = HumanAgent(problem).getMove(problem, 1, 1, 1)
+                    move = 0
+                elif True:
+                    move = playerPrograms[playerIdx].getMove(problem)
                 else: #minimax
                         startT = time.time()
                         try:
                             with timeout(2):
+                                move = playerPrograms[playerIdx].getMove(problem)
                                 move, numNodes = heuristicminimax.getMove(problem.getState(), problem.getTurn(), 4, playerPrograms[playerIdx][0], playerPrograms[playerIdx][1])
                                 print("lMove:" + str(move))
                                 nodes[playerIdx] += numNodes
@@ -323,11 +328,16 @@ def main():
         if players[i] != "random" and players[i] != "human":
             mod = importlib.import_module(".".join(players[i].split("/")[-1].split(".")[:-1]))
             with timeout(2):
-                leafEval = mod.MancalaHeuristicEval(problem)
-                order = mod.MancalaOrderHeuristic(problem)
-                playerPrograms[i] = (leafEval, order)
+                #leafEval = mod.MancalaHeuristicEval(problem)
+                #order = mod.MancalaOrderHeuristic(problem)
+                program = mod.Agent(problem)
+                playerPrograms[i] = program
               
     defaultOrder = [args.default1, args.default2]
+    for i in range(2):
+        if (defaultOrder[i]):
+            if playerPrograms[i].type == "minimax":
+                playerPrograms[i].setDefaultOrder(True)
     wins, times, turns, nodes, defaultNodes = playMancala(problem, initState, players, playerPrograms, numTrials, swaps, defaultOrder)
             
     if swaps == 2:

@@ -1,14 +1,5 @@
 import heuristicminimax
-
-class Agent:
-    def __init__(self, problem):
-        self.__problem = problem
-
-    def getMove(self, problem, program1, program2, order):
-        #heuristicEval = MancalaHeuristicEval(problem)
-        #moveOrderEval = MancalaOrderHeuristic(problem)
-        return heuristicminimax.getmove(problem.getState(), problem.getTurn(), program1, program2, order)
-
+from MinimaxAgent import Agent
 
 class MancalaHeuristicEval:
     def __init__(self, problem):
@@ -65,3 +56,7 @@ class MancalaOrderHeuristic:
 
         self.__problem.setState(curState)
         return successors
+
+Agent.heuristicEvalClass = MancalaHeuristicEval
+Agent.orderHeuristicClass = MancalaOrderHeuristic
+print(Agent.heuristicEval)
