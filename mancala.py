@@ -268,8 +268,6 @@ def playMancala(problem, initState, players, playerPrograms, numTrials, swaps, t
                         except TimeoutError:
                             print(players[playerIdx] + " timed out after 2 seconds. Choosing random action.")
                             move = random.choice(problem.legalMoves()) 
-                print(move)
-                print(problem.getBoard())
                 problem.move(move)            
             problem.displayBoard()
             if problem.finalScore() == 0:
