@@ -59,7 +59,7 @@ class Mancala:
         player2_holes = rows[2].split()
         newBoard = []
         for i in range(len(player1_holes)):
-            newBoard.append(int(player1_holes[i]))
+            newBoard.append(int(player1_holes[5-i]))
         newBoard.append(int(score_holes[0]))
         for i in range(len(player2_holes)):
             newBoard.append(int(player2_holes[i]))
@@ -268,6 +268,8 @@ def playMancala(problem, initState, players, playerPrograms, numTrials, swaps, t
                         except TimeoutError:
                             print(players[playerIdx] + " timed out after 2 seconds. Choosing random action.")
                             move = random.choice(problem.legalMoves()) 
+                print(move)
+                print(problem.getBoard())
                 problem.move(move)            
             problem.displayBoard()
             if problem.finalScore() == 0:
