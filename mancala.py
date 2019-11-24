@@ -5,6 +5,7 @@ import importlib
 import signal
 import os
 import sys
+from minimaxAgent import MinimaxAgent
 
 try:
     signal.SIGALRM
@@ -212,16 +213,6 @@ class Mancala:
     def __str__(self):
         '''Returns a string representing the board (same as getState()).'''
         return self.getState()
-    
-    def getMove(self):
-        '''Allows the user to click to decide which column to move in.'''
-        i = input()
-        if int(i) not in self.legalMoves():
-            print("Invalid Move. Please enter a number in this range:", self.legalMoves())
-            self.displayBoard()
-            return self.getMove()
-        else:
-            return int(i)
 
 
 class DefaultMoveOrder:
@@ -247,27 +238,12 @@ def playMancala(problem, initState, players, playerPrograms, numTrials, swaps, t
                 turn = problem.getTurn()
                 playerIdx = (1 - turn)//2
                 playerIdx = (playerIdx + i)%2
-                if players[playerIdx] == "random":
+                try:
+                    with timeout(2):
+                        move = playerPrograms[playerIdx].getMove(problem)
+                except TimeoutError:
+                    print(players[playerIdx] + " timed out after 2 seconds. Choosing random action.")
                     move = random.choice(problem.legalMoves())
-                elif players[playerIdx] == "human":
-                    move = problem.getMove()
-                else: #minimax
-                        startT = time.time()
-                        try:
-                            with timeout(2):
-                                move, numNodes = heuristicminimax.getMove(problem.getState(), problem.getTurn(), 4, playerPrograms[playerIdx][0], playerPrograms[playerIdx][1])
-                                nodes[playerIdx] += numNodes
-                                endT = time.time()
-                                times[playerIdx] += endT - startT
-                                turns[playerIdx] += 1
-
-                            if testDefault[playerIdx]:
-                                moveD, numNodesD = heuristicminimax.getMove(problem.getState(), problem.getTurn(), 4, playerPrograms[playerIdx][0], defaultOrder)
-                                defaultNodes[playerIdx] += numNodesD
-
-                        except TimeoutError:
-                            print(players[playerIdx] + " timed out after 2 seconds. Choosing random action.")
-                            move = random.choice(problem.legalMoves()) 
                 problem.move(move)            
             problem.displayBoard()
             if problem.finalScore() == 0:
@@ -283,6 +259,12 @@ def playMancala(problem, initState, players, playerPrograms, numTrials, swaps, t
             if swaps == 2:
                 whoWon = players[(0+i)%2] + " vs. " + players[(1+i)%2] + " game " + str(t+1) + ": " + whoWon
             print(whoWon)
+            for i in range(len(playerPrograms)):
+                if isinstance(playerPrograms[i], MinimaxAgent):
+                    nodes[i] = playerPrograms[i].nodes
+                    turns[i] = playerPrograms[i].turns
+                    times[i] = playerPrograms[i].timeTaken
+                    print("NODE" + str(nodes[i]))
     return wins, times, turns, nodes, defaultNodes
     
 def main():
@@ -319,9 +301,10 @@ def main():
         if players[i] != "random" and players[i] != "human":
             mod = importlib.import_module(".".join(players[i].split("/")[-1].split(".")[:-1]))
             with timeout(2):
-                leafEval = mod.MancalaHeuristicEval(problem)
-                order = mod.MancalaOrderHeuristic(problem)
-                playerPrograms[i] = (leafEval, order)
+                #leafEval = mod.MancalaHeuristicEval(problem)
+                #order = mod.MancalaOrderHeuristic(problem)
+                program = mod.Agent(problem)
+                playerPrograms[i] = program
               
     defaultOrder = [args.default1, args.default2]
     wins, times, turns, nodes, defaultNodes = playMancala(problem, initState, players, playerPrograms, numTrials, swaps, defaultOrder)
