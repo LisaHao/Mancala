@@ -1,3 +1,4 @@
+import builtins
 import random
 import argparse
 import time
@@ -15,6 +16,12 @@ except Exception as ex:
     
 import heuristicminimax
 from util.timeout import *
+settings = {"mprint": True}
+mprint = True
+def print(self, *args, sep=' ', end='\n', file=None):
+    if settings["mprint"]:
+        builtins.print(self, *args, sep=' ', end='\n', file=None)
+
 
 class Mancala:
     '''Represents the game Mancala.'''
@@ -222,7 +229,9 @@ class DefaultMoveOrder:
     def getSuccessors(self, state):
         return self.__problem.getSuccessors(state)
 
-def playMancala(problem, initState, players, playerPrograms, numTrials, swaps, testDefault):
+def playMancala(problem, initState, players, playerPrograms, numTrials, swaps, testDefault, toPrint=True):
+    settings.update({"mprint": toPrint})
+
     wins = [0, 0, 0]
     times = [0, 0]
     turns = [0, 0]
