@@ -1,4 +1,5 @@
 from minimaxAgent import MinimaxAgent
+
 class Agent(MinimaxAgent):
     class MancalaHeuristicEval:
         def __init__(self, problem):
@@ -8,37 +9,34 @@ class Agent(MinimaxAgent):
 
         def eval(self, state):
             '''Gives a heuristic evaluation of the given state.'''
-
             curState = self.__problem.getState()
             self.__problem.setState(state)
 
-            #####YOUR CODE BEGINS HERE#####
-            # You should take a look at connectfour.py to see what methods self.__problem has, but here are some that will probably be helpful:
-            # get/setState()
-            # getTurn() -- returns a number indicating whose turn it is in the current state: -1 for min, 1 for max, 2 if the state is terminal
-            # getSuccessors(state) -- returns the successors of the given state as 4-tuples: (next state, action to get there, whose turn it is in that state, the final score)
-            # getTile(row, col) -- returns the contents of the given position on the board ("X" for max, "O" for min, "." for empty)
-            # getHeights() -- returns a list of the heights of the stacks in the 7 columns
-            scorePositions = [6, 13]
             board = self.__problem._board
-            player1StoneScore = 0
-            player2StoneScore = 0
-            for i in range (0, scorePositions[0]):
-                player1StoneScore += board[i] / 2
-            player1StoneScore += board[scorePositions[0]]
-            for i in range (scorePositions[0] + 1, scorePositions[1]):
-                player2StoneScore += board[i] / 2
-            player2StoneScore += board[scorePositions[1]]
-            if (player1StoneScore + player1StoneScore == 0):
-                eval = 0
-            else:
-                eval = (player1StoneScore - player2StoneScore) / (player1StoneScore + player2StoneScore)
+            eval = 0
+            turn = self.__problem.getTurn()
+            stonePlayer1Score = 0
+            perfectPlayer1Stones = 0
+            confirmedPlayer1Stones = 0
+            stonePlayer2Score = 0
+            perfectPlayer2Stones = 0
+            confirmedPlayer2Stones = 0
+            confirmedPlayer1Stones += board[6]
+            confirmedPlayer2Stones += board[13]
+            for i in range(0, 6):
+                stonePlayer1Score += board[i]
+                if board[i] == 6 - i:
+                    perfectPlayer1Stones += 1
+            for i in range(7, 13):
+                stonePlayer2Score += board[i]
+                if board[i] == 1 + i % 6:
+                    perfectPlayer2Stones += 1
+            eval = (stonePlayer1Score - stonePlayer2Score) + 3 * (perfectPlayer1Stones - perfectPlayer2Stones) + 5 * (
+                        confirmedPlayer1Stones - confirmedPlayer2Stones) / 100
             ######YOUR CODE ENDS HERE######
 
             self.__problem.setState(curState)
             return eval
-
-
     class MancalaOrderHeuristic:
         def __init__(self, problem):
             self.__problem = problem
