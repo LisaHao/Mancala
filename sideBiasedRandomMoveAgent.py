@@ -87,8 +87,8 @@ class Agent(MinimaxAgent):
             value += random.choice([-2, -1, 0, 1, 2])
             return value
 
-        def __init__(self, problem):
-            super().__init__(problem)
-            self.problem = problem
-            self.heuristicEval = self.MancalaHeuristicEval
-            self.orderEval = self.MancalaOrderHeuristic
+    def __init__(self, problem):
+        super().__init__(problem)
+        self.problem = problem
+        self.heuristicEval = self.MancalaHeuristicEval
+        self.orderEval = self.MancalaOrderHeuristic
