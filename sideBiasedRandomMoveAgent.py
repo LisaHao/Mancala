@@ -80,9 +80,6 @@ class Agent(MinimaxAgent):
             # want to prioritize earlier actions first
             value -= action%6
             scoreDifference = board[6] - board[13]
-
-            # want to prioritize actions that make the biggest score difference
-            value -= scoreDifference
             value += random.choice([-2, -1, 0, 1, 2])
             return value
 

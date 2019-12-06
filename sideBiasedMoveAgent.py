@@ -80,10 +80,6 @@ class Agent(MinimaxAgent):
             board = problem._board
             # want to prioritize earlier actions first
             value -= action%6
-            scoreDifference = board[6] - board[13]
-
-            # want to prioritize actions that make the biggest score difference
-            value -= scoreDifference
             return value
 
     def __init__(self, problem):
