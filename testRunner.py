@@ -14,9 +14,7 @@ def play(program1, program2, name1, name2):
     swaps = 2
     wins, times, turns, nodes, defaultNodes = mancala.playMancala(problem, initState, [name1, name2], [agent1, agent2],
                                                           numTrials, swaps, defaultOrder, toPrint=False)
-    for w in range(len(totalwins)):
-        totalwins[w] += wins[w]
-    return totalwins
+    return wins
 
 def printResults(results, programNames):
     tab= " \t"
@@ -48,7 +46,7 @@ def main():
     for i in range(len(programList)):
         for j in range(i + 1, len(programList)):
             wins = play(programList[i], programList[j], programNames[i], programNames[j])
-            results[i].append(str(wins[0]) + "-" + str(wins[1]))
+            results[i].append(str(wins[0]) + "-" + str(wins[1]) + "-"+ str(wins[2]))
             print("finished trial " +str(i) + "-" + str(j))
     printResults(results, programNames)
 

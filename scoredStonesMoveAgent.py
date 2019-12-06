@@ -59,7 +59,7 @@ class Agent(MinimaxAgent):
                     q.put([-500, successor])
                 # else, compute the value of the successor and put in priority queue
                 else:
-                    value = self.compute_value(successor)
+                    value = self.compute_value(state, successor)
                     q.put([value, successor])
             orderedSuccessors = []
             while not q.empty():
@@ -69,14 +69,37 @@ class Agent(MinimaxAgent):
             self.__problem.setState(curState)
             return successors
 
-        def compute_value(self, successor):
+        def compute_value(self, prevState , successor):
+            # regarding the two rules: cross-captures are good because they also deny the opponent points.
+            # extra turn is even better since you can extra turn -> cross capture. We want to prioritize
+            # LATER actions first in case of extra turns in case there are multiple ones available.
+            # However, extra turn probably ruins a cross capture opportunity since it puts 1 in every hole
+            # it passes.
             value = 0
             action = successor[1]
+            # the board here is before the action takes place.
             problem = self.__problem
             board = problem._board
+            extraTurn = self.extraTurn(action, board)
+            crossCapture = self.crossCapture(action , board)
+            extraTurnPoints = extraTurn * (-100)
+            crossCapturePoints = crossCapture * (-20)
+            positionPoints = 0 - (action%6)
             # want to prioritize earlier actions first
-            value -= action%6
+            value = extraTurnPoints + crossCapturePoints + positionPoints
             return value
+
+        def extraTurn(self, action, curBoard):
+            distToStore = 6 - (action % 7)
+            return curBoard[action] == distToStore
+
+        def crossCapture(self, action, curBoard):
+            storeSide = action // 7
+            endHole = (action + curBoard[action]) % 14
+            if (endHole // 7 == storeSide and (endHole % 7 != 6)and curBoard[endHole] == 0):
+                return True
+            else:
+                return False
 
     def __init__(self, problem):
         super().__init__(problem)
