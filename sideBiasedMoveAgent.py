@@ -78,13 +78,12 @@ class Agent(MinimaxAgent):
             action = successor[1]
             problem = self.__problem
             board = problem._board
-            player1StoneScore = 0
-            player2StoneScore = 0
-            for i in range (0, 6):
-                player1StoneScore += board[i] / 2
-            for i in range (7, 13):
-                player2StoneScore += board[i] / 2
-            value = player1StoneScore - player2StoneScore
+            # want to prioritize earlier actions first
+            value -= action%6
+            scoreDifference = board[6] - board[13]
+
+            # want to prioritize actions that make the biggest score difference
+            value -= scoreDifference
             return value
 
     def __init__(self, problem):

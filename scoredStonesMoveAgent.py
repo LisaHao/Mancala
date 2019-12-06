@@ -81,6 +81,7 @@ class Agent(MinimaxAgent):
             # want to prioritize actions that make the biggest score difference
             value -= scoreDifference
             return value
+            
     def __init__(self, problem):
         super().__init__(problem)
         self.problem = problem
