@@ -9,7 +9,6 @@ class Agent(MinimaxAgent):
 
         def eval(self, state):
             '''Gives a heuristic evaluation of the given state.'''
-            '''Gives a heuristic evaluation of the given state.'''
             curState = self.__problem.getState()
             self.__problem.setState(state)
 
@@ -31,7 +30,7 @@ class Agent(MinimaxAgent):
                 stonePlayer2Score += board[i]
                 if board[i] == 1 + i%6:
                     perfectPlayer2Stones += 1
-            eval = (stonePlayer1Score - stonePlayer2Score) + 3*(perfectPlayer1Stones - perfectPlayer2Stones) + 5*(confirmedPlayer1Stones - confirmedPlayer2Stones) / 100
+            eval = (3 * (stonePlayer1Score - stonePlayer2Score) + 5 *(perfectPlayer1Stones - perfectPlayer2Stones) + 5*(confirmedPlayer1Stones - confirmedPlayer2Stones)) / 100
             ######YOUR CODE ENDS HERE######
 
             self.__problem.setState(curState)

@@ -273,7 +273,6 @@ def playMancala(problem, initState, players, playerPrograms, numTrials, swaps, t
                     nodes[i] = playerPrograms[i].nodes
                     turns[i] = playerPrograms[i].turns
                     times[i] = playerPrograms[i].timeTaken
-                    print("NODE" + str(nodes[i]))
     return wins, times, turns, nodes, defaultNodes
     
 def main():

@@ -54,6 +54,7 @@ class Agent(MinimaxAgent):
 
             #####YOUR CODE BEGINS HERE#####
             successors = self.__problem.getSuccessors(state)
+
             orderedSuccessors = []
             # utilize a priority queue to return successor who most likely has the best value
             q = queue.PriorityQueue()
