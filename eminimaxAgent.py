@@ -2,10 +2,10 @@ import time
 import random
 import heuristicminimax
 
-import sideBiasedMoveAgent
+import sideBiasedAgent
 searchDepth = 4
 epsilon = 0.25
-class Agent(sideBiasedMoveAgent.Agent):
+class Agent(sideBiasedAgent.Agent):
     def getMove(self, problem):
         startT = time.time()
         if (random.uniform(0, 1) > epsilon):
