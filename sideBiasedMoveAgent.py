@@ -54,6 +54,7 @@ class Agent(MinimaxAgent):
 
             #####YOUR CODE BEGINS HERE#####
             successors = self.__problem.getSuccessors(state)
+
             orderedSuccessors = []
             # utilize a priority queue to return successor who most likely has the best value
             q = queue.PriorityQueue()
@@ -78,17 +79,12 @@ class Agent(MinimaxAgent):
             action = successor[1]
             problem = self.__problem
             board = problem._board
-            player1StoneScore = 0
-            player2StoneScore = 0
-            for i in range (0, 6):
-                player1StoneScore += board[i] / 2
-            for i in range (7, 13):
-                player2StoneScore += board[i] / 2
-            value = player1StoneScore - player2StoneScore
+            # want to prioritize earlier actions first
+            value -= action%6
             return value
 
-        def __init__(self, problem):
-            super().__init__(problem)
-            self.problem = problem
-            self.heuristicEval = self.MancalaHeuristicEval
-            self.orderEval = self.MancalaOrderHeuristic
+    def __init__(self, problem):
+        super().__init__(problem)
+        self.problem = problem
+        self.heuristicEval = self.MancalaHeuristicEval
+        self.orderEval = self.MancalaOrderHeuristic

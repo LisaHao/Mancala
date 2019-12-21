@@ -77,18 +77,14 @@ class Agent(MinimaxAgent):
             action = successor[1]
             problem = self.__problem
             board = problem._board
-            player1StoneScore = 0
-            player2StoneScore = 0
-            for i in range (0, 6):
-                player1StoneScore += board[i] / 2
-            for i in range (7, 13):
-                player2StoneScore += board[i] / 2
-            value = player1StoneScore - player2StoneScore
+            # want to prioritize earlier actions first
+            value -= action%6
+            scoreDifference = board[6] - board[13]
             value += random.choice([-2, -1, 0, 1, 2])
             return value
 
-        def __init__(self, problem):
-            super().__init__(problem)
-            self.problem = problem
-            self.heuristicEval = self.MancalaHeuristicEval
-            self.orderEval = self.MancalaOrderHeuristic
+    def __init__(self, problem):
+        super().__init__(problem)
+        self.problem = problem
+        self.heuristicEval = self.MancalaHeuristicEval
+        self.orderEval = self.MancalaOrderHeuristic
